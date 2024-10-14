@@ -1,28 +1,51 @@
 import { connectDB } from "@/database/index.js";
-// import cors from "cors";
+import grpc from "@grpc/grpc-js";
+import protoLoader from "@grpc/proto-loader";
 import dotenv from "dotenv";
-import express from "express";
-// import helmet from "helmet";
-// import morgan from "morgan";
+import path from "path";
+import { fileURLToPath } from "url";
+import {
+    createTaskController,
+    readTaskController,
+    updateTaskController,
+    deleteTaskController,
+} from "../src/v1/controller/task.controller.js";
 
 dotenv.config();
 
-// Constants
-const app = express();
-const port = process.env.PORT || 3000;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-// Connect MongoDB
-connectDB();
+const PROTO_PATH = path.join(__dirname, "../../proto/task.proto");
 
-// app.use(cors());
-// app.use(morgan("combined"));
-// app.use(helmet());
-app.use(express.json());
-
-app.get("/", (req, res) => {
-    res.send("Hello world!!");
+const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
+    keepCase: true,
+    longs: String,
+    enums: String,
+    defaults: true,
+    oneofs: true,
 });
 
-app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
+const taskPackage = grpc.loadPackageDefinition(packageDefinition) as any;
+const taskProto = taskPackage.task;
+
+const server = new grpc.Server();
+
+server.addService(taskProto.TaskService.service, {
+    CreateTask: createTaskController,
+    ReadTask: readTaskController,
+    UpdateTask: updateTaskController,
+    DeleteTask: deleteTaskController,
 });
+
+const port = process.env.GRPC_PORT;
+
+server.bindAsync(
+    `0.0.0.0:${port}`,
+    grpc.ServerCredentials.createInsecure(),
+    async () => {
+        await connectDB();
+        console.log(`gRPC server running at http://0.0.0.0:${port}`);
+        server.start();
+    }
+);
