@@ -5,7 +5,9 @@
   "main": "dist/app/server.js",
   "type": "module",
   "scripts": {
-    "start": "node ./dist/app/server.js",
+    "start": "node ./dist/app/index.js",
+    "start:server": "node ./dist/app/server.js",
+    "start:client": "node ./dist/app/client.js",
     "dev": "nodemon --exec node --loader ts-node/esm -r tsconfig-paths/register ./app/server.ts",
     "build": "tsc --build && tsc-alias",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -15,18 +17,18 @@
   "license": "ISC",
   "dependencies": {
     "@grpc/grpc-js": "^1.12.2",
+    "@grpc/proto-loader": "^0.7.13",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
+    "mongodb": "^6.9.0",
     "mongoose": "^8.7.1"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
     "nodemon": "^3.1.7",
     "ts-node": "^10.9.2",
-    "ts-node-dev": "^2.0.0",
     "tsc-alias": "^1.8.10",
     "tsconfig-paths": "^4.2.0",
-    "tsx": "^4.19.1",
     "typescript": "^5.6.3"
   }
 }
