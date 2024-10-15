@@ -1,34 +1,23 @@
 {
-  "name": "auth-service",
+  "name": "@grpc/task-service",
   "version": "1.0.0",
-  "description": "",
-  "main": "dist/app/server.js",
   "type": "module",
   "scripts": {
-    "start": "node ./dist/app/index.js",
-    "start:server": "node ./dist/app/server.js",
-    "start:client": "node ./dist/app/client.js",
-    "dev": "nodemon --exec node --loader ts-node/esm -r tsconfig-paths/register ./app/server.ts",
-    "build": "tsc --build && tsc-alias",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "bun --watch ./app/index.ts --hot",
+    "dev:server": "deno run --allow-net --allow-env --watch ./app/server.ts",
+    "dev:client": "deno run --allow-net --allow-env --watch ./app/client.ts",
+    "proto": "protoc --ts_out=grpc_js:./src/v1/proto --js_out=import_style=commonjs,binary:./src/v1/proto --grpc_out=grpc_js:./src/v1/proto ./src/v1/proto/task.proto"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "@grpc/grpc-js": "^1.12.2",
     "@grpc/proto-loader": "^0.7.13",
-    "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "mongodb": "^6.9.0",
     "mongoose": "^8.7.1"
   },
-  "devDependencies": {
-    "@types/express": "^5.0.0",
-    "nodemon": "^3.1.7",
-    "ts-node": "^10.9.2",
-    "tsc-alias": "^1.8.10",
-    "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.6.3"
+  "devDependencies": { "@types/express": "^5.0.0", "typescript": "^5.6.3" },
+  "nodeModulesDir": "auto",
+  "compilerOptions": {
+    "lib": ["ES2020", "DOM"]
   }
 }
