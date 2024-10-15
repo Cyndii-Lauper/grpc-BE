@@ -1,12 +1,13 @@
+// deno-lint-ignore-file no-explicit-any
 import grpc from "@grpc/grpc-js";
 import protoLoader from "@grpc/proto-loader";
-import path from "path";
-import { fileURLToPath } from "url";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const PROTO_PATH = path.join(__dirname, "../../proto/task.proto");
+const PROTO_PATH = path.join(__dirname, "../proto/task.proto");
 
 const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
     keepCase: true,
@@ -31,7 +32,7 @@ client.CreateTask(
         description: "Test Description",
         completed: false,
     },
-    (error: any, response: any) => {
+    (error: Error, response: Response) => {
         if (!error) {
             console.log("Task Created:", response);
         } else {
@@ -41,7 +42,7 @@ client.CreateTask(
 );
 
 //* ---Read a task---
-client.ReadTask({ id: "1" }, (error: any, response: any) => {
+client.ReadTask({ id: "1" }, (error: Error, response: Response) => {
     if (!error) {
         console.log("Task Read:", response);
     } else {
@@ -57,7 +58,7 @@ client.UpdateTask(
         description: "Updated Description",
         completed: true,
     },
-    (error: any, response: any) => {
+    (error: Error, response: Response) => {
         if (!error) {
             console.log("Task Updated:", response);
         } else {
@@ -67,7 +68,7 @@ client.UpdateTask(
 );
 
 //* ---Delete a task---
-client.DeleteTask({ id: "1" }, (error: any, response: any) => {
+client.DeleteTask({ id: "1" }, (error: Error, response: Response) => {
     if (!error) {
         console.log("Task Deleted:", response);
     } else {

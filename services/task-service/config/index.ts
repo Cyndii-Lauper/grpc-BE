@@ -1,2 +1,2 @@
-export * from "./db.conf.js";
-export * from "./db.keys.js";
+export * from "./db.conf.ts";
+export * from "./db.keys.ts";

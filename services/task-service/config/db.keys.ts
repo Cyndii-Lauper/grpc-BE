@@ -1,10 +1,10 @@
-import dotenv from "dotenv";
+import { config } from "https://deno.land/x/dotenv@v3.2.2/mod.ts";
 
-dotenv.config();
+const env = config();
 
 export const dbKeys = {
-    mongoUser: process.env.MONGODB_USERNAME,
-    mongoPassword: process.env.MONGODB_PASSWORD,
-    mongoCluster: process.env.MONGODB_CLUSTER,
-    mongoName: process.env.MONGODB_DBNAME,
+    mongoUser: env.MONGODB_USERNAME,
+    mongoPassword: env.MONGODB_PASSWORD,
+    mongoCluster: env.MONGODB_CLUSTER,
+    mongoName: env.MONGODB_DBNAME,
 };

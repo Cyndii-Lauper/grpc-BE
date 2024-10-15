@@ -8,7 +8,7 @@ Task Service is a gRPC service built with TypeScript, utilizing Mongoose to inte
 
 - **Node.js** version 20.x.x
 - **MongoDB**
-- **npm** or **yarn** or **bun**
+- **Deno** and **Bun**
 
 ## Installation
 
@@ -22,7 +22,7 @@ Task Service is a gRPC service built with TypeScript, utilizing Mongoose to inte
 2. **Install dependencies:**
 
     ```bash
-    bun i
+    deno i
     ```
 
 3. **Set up environment variables:**
@@ -35,44 +35,29 @@ Task Service is a gRPC service built with TypeScript, utilizing Mongoose to inte
     MONGODB_CLUSTER=<MongoDB cluster>
     MONGODB_DBNAME=<database name>
     GRPC_PORT=50051
-    PORT=3000
     ```
 
 ## Usage
 
 ### Running the Service
 
-- **Build the project:**
+- **Test the project:**
 
     ```bash
-    bun run build
+    bun start
     ```
 
 - **Run the gRPC server:**
 
     ```bash
-    bun start:server
+    deno task dev:server
     ```
 
 - **Run the gRPC client:**
 
     ```bash
-    bun start:client
+    deno task dev:client
     ```
-
-- **Run the server in development mode:**
-
-    ```bash
-    bun dev
-    ```
-
-### Building the Project
-
-To compile TypeScript into JavaScript:
-
-```bash
-bun run build
-```
 
 ### gRPC APIs
 

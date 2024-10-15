@@ -1,9 +1,10 @@
+// deno-lint-ignore-file no-explicit-any
 import {
     createTask,
     readTask,
     updateTask,
     deleteTask,
-} from "../service/task.service.js";
+} from "../service/task.service.ts";
 
 export const createTaskController = async (call: any, callback: any) => {
     const result = await createTask(call.request);

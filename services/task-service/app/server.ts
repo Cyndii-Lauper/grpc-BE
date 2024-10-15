@@ -1,22 +1,23 @@
-import { connectDB } from "@/database/index.js";
+// deno-lint-ignore-file
+import { connectDB } from "../database/index.ts";
 import grpc from "@grpc/grpc-js";
 import protoLoader from "@grpc/proto-loader";
-import dotenv from "dotenv";
-import path from "path";
-import { fileURLToPath } from "url";
+import { config } from "https://deno.land/x/dotenv@v3.2.2/mod.ts";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import {
     createTaskController,
     readTaskController,
     updateTaskController,
     deleteTaskController,
-} from "../src/v1/controller/task.controller.js";
+} from "../src/v1/controller/task.controller.ts";
 
-dotenv.config();
+const env = config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const PROTO_PATH = path.join(__dirname, "../../proto/task.proto");
+const PROTO_PATH = path.join(__dirname, "../proto/task.proto");
 
 const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
     keepCase: true,
@@ -38,7 +39,7 @@ server.addService(taskProto.TaskService.service, {
     DeleteTask: deleteTaskController,
 });
 
-const port = process.env.GRPC_PORT;
+const port = env.GRPC_PORT;
 
 server.bindAsync(
     `0.0.0.0:${port}`,
