@@ -1,7 +1,7 @@
 import { connect } from "mongoose";
 import { dbConfig } from "../config/index.ts";
 
-export const connectDB = async () => {
+const connectDB = async () => {
     try {
         const uri = `${dbConfig.mongoURI}`;
         await connect(uri);
@@ -12,3 +12,5 @@ export const connectDB = async () => {
         setTimeout(connectDB, 5000);
     }
 };
+
+export default connectDB;
