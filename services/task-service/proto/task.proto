@@ -3,13 +3,14 @@ syntax = "proto3";
 package task;
 
 service TaskService {
-  rpc CreateTask (Task) returns (TaskResponse);
-  rpc ReadTask (TaskId) returns (Task);
-  rpc UpdateTask (Task) returns (TaskResponse);
+  rpc CreateTask (CreateTask) returns (TaskResponse);
+  rpc ReadTask (TaskId) returns (TaskResponse);
+  rpc UpdateTask (TaskItem) returns (TaskResponse);
   rpc DeleteTask (TaskId) returns (TaskResponse);
+  rpc ListTasks (ListTasks) returns (ListTasksResponse);
 }
 
-message Task {
+message TaskItem {
   string id = 1;
   string title = 2;
   string description = 3;
@@ -20,7 +21,18 @@ message TaskId {
   string id = 1;
 }
 
+message CreateTask {
+  string title = 1;
+  string description = 2;
+}
+
 message TaskResponse {
-    bool success = 1;
-    string message = 2;
+  bool success = 1;
+  TaskItem task = 2;
+}
+
+message ListTasks {}
+
+message ListTasksResponse {
+  repeated TaskItem tasks = 1;
 }

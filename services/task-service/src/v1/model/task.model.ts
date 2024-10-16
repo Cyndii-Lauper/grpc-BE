@@ -1,10 +1,18 @@
 import { Schema, model } from "mongoose";
+import { v4 as uuidv4 } from "uuid";
 
-const taskSchema = new Schema({
+interface ITask {
+    id: string;
+    title: string;
+    description?: string;
+    completed: boolean;
+}
+
+const taskSchema = new Schema<ITask>({
     id: {
         type: String,
-        required: true,
         unique: true,
+        default: () => uuidv4(),
     },
     title: {
         type: String,
@@ -12,7 +20,7 @@ const taskSchema = new Schema({
     },
     description: {
         type: String,
-        required: true,
+        required: false,
     },
     completed: {
         type: Boolean,
@@ -20,4 +28,4 @@ const taskSchema = new Schema({
     },
 });
 
-export const TaskModel = model("Task", taskSchema);
+export const TaskModel = model<ITask>("Task", taskSchema);

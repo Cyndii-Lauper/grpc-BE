@@ -1,52 +1,34 @@
-// deno-lint-ignore-file
-import { connectDB } from "../database/index.ts";
-import grpc from "@grpc/grpc-js";
-import protoLoader from "@grpc/proto-loader";
-import { config } from "https://deno.land/x/dotenv@v3.2.2/mod.ts";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
+import connectDB from "../database/mongo.database.ts";
 import {
     createTaskController,
     readTaskController,
     updateTaskController,
     deleteTaskController,
+    getAllTasksController,
 } from "../src/v1/controller/task.controller.ts";
+import { config, GrpcServer } from "../deps.ts";
 
-const env = config();
+import { TaskService } from "../types/task.d.ts";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const protoPath = new URL("../proto/task.proto", import.meta.url);
+const protoFile = await Deno.readTextFile(protoPath);
 
-const PROTO_PATH = path.join(__dirname, "../proto/task.proto");
+const server = new GrpcServer();
 
-const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
-    keepCase: true,
-    longs: String,
-    enums: String,
-    defaults: true,
-    oneofs: true,
-});
-
-const taskPackage = grpc.loadPackageDefinition(packageDefinition) as any;
-const taskProto = taskPackage.task;
-
-const server = new grpc.Server();
-
-server.addService(taskProto.TaskService.service, {
+const taskService: TaskService = {
     CreateTask: createTaskController,
     ReadTask: readTaskController,
     UpdateTask: updateTaskController,
     DeleteTask: deleteTaskController,
-});
+    ListTasks: getAllTasksController,
+};
 
-const port = env.GRPC_PORT;
+server.addService<TaskService>(protoFile, taskService);
 
-server.bindAsync(
-    `0.0.0.0:${port}`,
-    grpc.ServerCredentials.createInsecure(),
-    async () => {
-        await connectDB();
-        console.log(`gRPC server running at http://0.0.0.0:${port}`);
-        server.start();
-    }
-);
+const port = +config().GRPC_PORT || 50052;
+
+await connectDB();
+console.log(`gonna listen on ${port} port`);
+for await (const conn of Deno.listen({ port: port })) {
+    server.handle(conn);
+}

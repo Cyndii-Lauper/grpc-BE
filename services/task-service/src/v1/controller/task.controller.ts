@@ -1,27 +1,48 @@
-// deno-lint-ignore-file no-explicit-any
 import {
     createTask,
-    readTask,
+    readTaskbyId,
     updateTask,
     deleteTask,
+    getAllTasks,
 } from "../service/task.service.ts";
+import type {
+    ListTasksResponse,
+    TaskItem,
+    TaskResponse,
+} from "../../../types/task.d.ts";
 
-export const createTaskController = async (call: any, callback: any) => {
-    const result = await createTask(call.request);
-    callback(null, result);
+export const getAllTasksController = async (): Promise<ListTasksResponse> => {
+    const response = await getAllTasks();
+    return {
+        tasks: response.tasks.map((t) => ({
+            id: t.id.toString(),
+            title: t.title,
+            description: t.description,
+            completed: t.completed,
+        })),
+    };
 };
 
-export const readTaskController = async (call: any, callback: any) => {
-    const result = await readTask(call.request.id);
-    callback(null, result);
+export const createTaskController = async (
+    request: TaskItem
+): Promise<TaskResponse> => {
+    return await createTask(request);
 };
 
-export const updateTaskController = async (call: any, callback: any) => {
-    const result = await updateTask(call.request.id, call.request);
-    callback(null, result);
+export const readTaskController = async (
+    request: TaskItem & { id: string }
+): Promise<TaskResponse> => {
+    return await readTaskbyId(request.id);
 };
 
-export const deleteTaskController = async (call: any, callback: any) => {
-    const result = await deleteTask(call.request.id);
-    callback(null, result);
+export const updateTaskController = async (
+    request: TaskItem & { id: string }
+): Promise<TaskResponse> => {
+    return await updateTask(request.id, request);
+};
+
+export const deleteTaskController = async (request: {
+    id: string;
+}): Promise<TaskResponse> => {
+    return await deleteTask(request.id);
 };

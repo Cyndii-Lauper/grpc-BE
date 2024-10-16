@@ -1,77 +1,58 @@
-// deno-lint-ignore-file no-explicit-any
-import grpc from "@grpc/grpc-js";
-import protoLoader from "@grpc/proto-loader";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { getClient, config } from "../deps.ts";
+import type { TaskService } from "../types/task.d.ts";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const protoPath = new URL("../proto/task.proto", import.meta.url);
+const protoFile = await Deno.readTextFile(protoPath);
 
-const PROTO_PATH = path.join(__dirname, "../proto/task.proto");
+const port = +config().GRPC_PORT || 50052;
 
-const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
-    keepCase: true,
-    longs: String,
-    enums: String,
-    defaults: true,
-    oneofs: true,
+const client = getClient<TaskService>({
+    port: port,
+    root: protoFile,
+    serviceName: "TaskService",
 });
 
-const taskProto = grpc.loadPackageDefinition(packageDefinition).task;
+async function main() {
+    try {
+        //* --- Get all tasks ---
+        const Results = await client.ListTasks({});
+        console.log("Task created:", Results);
 
-const client = new (taskProto as any).TaskService(
-    "localhost:50051",
-    grpc.credentials.createInsecure()
-);
+        //* --- Create new task ---
+        const createResult = await client.CreateTask({
+            title: "Test Task",
+            description: "Test Description",
+        });
+        console.log("Task created:", createResult);
 
-//* ---Create a new task---
-client.CreateTask(
-    {
-        id: "1",
-        title: "Test Task",
-        description: "Test Description",
-        completed: false,
-    },
-    (error: Error, response: Response) => {
-        if (!error) {
-            console.log("Task Created:", response);
-        } else {
-            console.error("Error:", error);
+        const taskId = createResult?.task;
+        if (!taskId) {
+            throw new Error("Task ID is not returned after creation");
         }
-    }
-);
 
-//* ---Read a task---
-client.ReadTask({ id: "1" }, (error: Error, response: Response) => {
-    if (!error) {
-        console.log("Task Read:", response);
-    } else {
-        console.error("Error:", error);
-    }
-});
+        //* --- Get task by Id ---
+        const readResult = await client.ReadTask({
+            id: taskId.id,
+        });
+        console.log("Task read:", readResult.task);
 
-//* ---Update a task---
-client.UpdateTask(
-    {
-        id: "1",
-        title: "Updated Task",
-        description: "Updated Description",
-        completed: true,
-    },
-    (error: Error, response: Response) => {
-        if (!error) {
-            console.log("Task Updated:", response);
-        } else {
-            console.error("Error:", error);
-        }
-    }
-);
+        //* --- Update task by Id ---
+        const updateResult = await client.UpdateTask({
+            id: taskId.id,
+            title: "Updated Task",
+            description: "Updated Description",
+            completed: true,
+        });
+        console.log("Task updated:", updateResult);
 
-//* ---Delete a task---
-client.DeleteTask({ id: "1" }, (error: Error, response: Response) => {
-    if (!error) {
-        console.log("Task Deleted:", response);
-    } else {
-        console.error("Error:", error);
+        //* --- Delete task by Id ---
+        const deleteResult = await client.DeleteTask({
+            id: taskId.id,
+        });
+        console.log("Task deleted:", deleteResult);
+    } catch (error) {
+        console.error("Error occurred:", error);
     }
-});
+}
+
+main();
