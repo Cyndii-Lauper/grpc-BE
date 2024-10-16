@@ -4,16 +4,14 @@
   "type": "module",
   "scripts": {
     "start": "bun --watch ./app/index.ts --hot",
-    "dev:server": "deno run --allow-net --allow-env --watch ./app/server.ts",
-    "dev:client": "deno run --allow-net --allow-env --watch ./app/client.ts",
-    "proto": "protoc --ts_out=grpc_js:./src/v1/proto --js_out=import_style=commonjs,binary:./src/v1/proto --grpc_out=grpc_js:./src/v1/proto ./src/v1/proto/task.proto"
+    "dev:server": "deno run --allow-net --allow-env --allow-read --allow-sys --watch ./app/server.ts",
+    "dev:client": "deno run --allow-net --allow-env --allow-read --allow-sys --watch ./app/client.ts",
+    "proto": "deno run --allow-read https://deno.land/x/grpc_basic@0.4.7/gen/dts.ts ./proto/task.proto > ./types/task.d.ts"
   },
   "dependencies": {
-    "@grpc/grpc-js": "^1.12.2",
-    "@grpc/proto-loader": "^0.7.13",
-    "express": "^4.21.1",
     "mongodb": "^6.9.0",
-    "mongoose": "^8.7.1"
+    "mongoose": "^8.7.1",
+    "uuid": "^10.0.0"
   },
   "devDependencies": { "@types/express": "^5.0.0", "typescript": "^5.6.3" },
   "nodeModulesDir": "auto",
