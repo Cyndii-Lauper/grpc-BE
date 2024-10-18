@@ -14,8 +14,11 @@ message TaskItem {
   string id = 1;
   string title = 2;
   string description = 3;
-  bool completed = 4;
+  string startTime = 4;
+  string endTime = 5;
+  bool completed = 6;
 }
+
 
 message TaskId {
   string id = 1;
@@ -24,15 +27,19 @@ message TaskId {
 message CreateTask {
   string title = 1;
   string description = 2;
+  string startTime = 3;
+  string endTime = 4;
 }
 
 message TaskResponse {
   bool success = 1;
   TaskItem task = 2;
+  string message = 3;
 }
 
 message ListTasks {}
 
 message ListTasksResponse {
   repeated TaskItem tasks = 1;
+  string message = 2;
 }
