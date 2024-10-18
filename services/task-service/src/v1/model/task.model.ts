@@ -5,6 +5,8 @@ interface ITask {
     id: string;
     title: string;
     description?: string;
+    startTime?: string;
+    endTime?: string;
     completed: boolean;
 }
 
@@ -19,6 +21,14 @@ const taskSchema = new Schema<ITask>({
         required: true,
     },
     description: {
+        type: String,
+        required: false,
+    },
+    startTime: {
+        type: String,
+        required: false,
+    },
+    endTime: {
         type: String,
         required: false,
     },

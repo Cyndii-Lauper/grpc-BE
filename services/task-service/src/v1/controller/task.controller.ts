@@ -10,39 +10,81 @@ import type {
     TaskItem,
     TaskResponse,
 } from "../../../types/task.d.ts";
+import { handleError, mapTaskToResponse } from "../../../utils/utils.ts";
 
 export const getAllTasksController = async (): Promise<ListTasksResponse> => {
-    const response = await getAllTasks();
-    return {
-        tasks: response.tasks.map((t) => ({
-            id: t.id.toString(),
-            title: t.title,
-            description: t.description,
-            completed: t.completed,
-        })),
-    };
+    try {
+        const tasks = await getAllTasks();
+        return {
+            tasks: tasks.map(mapTaskToResponse),
+            message: "Show all tasks successfully",
+        };
+    } catch (err) {
+        return handleError(err, "Unable to get task list");
+    }
 };
 
 export const createTaskController = async (
     request: TaskItem
 ): Promise<TaskResponse> => {
-    return await createTask(request);
+    try {
+        const task = await createTask(request);
+        return {
+            success: true,
+            task: mapTaskToResponse(task),
+            message: "Task created successfully",
+        };
+    } catch (err) {
+        return handleError(err, "Task creation failed");
+    }
 };
 
 export const readTaskController = async (
     request: TaskItem & { id: string }
 ): Promise<TaskResponse> => {
-    return await readTaskbyId(request.id);
+    try {
+        const task = await readTaskbyId(request.id);
+        if (!task) {
+            throw new Error("Task not found");
+        }
+        return {
+            success: true,
+            task: mapTaskToResponse(task),
+            message: "Find task successfully",
+        };
+    } catch (err) {
+        return handleError(err, "Failed to read task");
+    }
 };
 
 export const updateTaskController = async (
     request: TaskItem & { id: string }
 ): Promise<TaskResponse> => {
-    return await updateTask(request.id, request);
+    try {
+        const task = await updateTask(request.id, request);
+        if (!task) {
+            throw new Error("Task not found");
+        }
+        return {
+            success: true,
+            task: mapTaskToResponse(task),
+            message: "Task updated successfully",
+        };
+    } catch (err) {
+        return handleError(err, "Failed to update task");
+    }
 };
 
 export const deleteTaskController = async (request: {
     id: string;
 }): Promise<TaskResponse> => {
-    return await deleteTask(request.id);
+    try {
+        await deleteTask(request.id);
+        return {
+            success: true,
+            message: "Task deleted successfully",
+        };
+    } catch (err) {
+        return handleError(err, "Failed to delete task");
+    }
 };
