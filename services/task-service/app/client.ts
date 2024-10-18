@@ -16,16 +16,17 @@ async function main() {
     try {
         //* --- Get all tasks ---
         const Results = await client.ListTasks({});
-        console.log("Task created:", Results);
+        console.log("Tasks:", Results);
 
         //* --- Create new task ---
         const createResult = await client.CreateTask({
             title: "Test Task",
             description: "Test Description",
+            startTime: new Date().toISOString(),
+            endTime: new Date(Date.now() + 3600 * 1000).toISOString(),
         });
         console.log("Task created:", createResult);
-
-        const taskId = createResult?.task;
+        const taskId = createResult.task;
         if (!taskId) {
             throw new Error("Task ID is not returned after creation");
         }
@@ -34,7 +35,7 @@ async function main() {
         const readResult = await client.ReadTask({
             id: taskId.id,
         });
-        console.log("Task read:", readResult.task);
+        console.log("Task read:", readResult);
 
         //* --- Update task by Id ---
         const updateResult = await client.UpdateTask({
