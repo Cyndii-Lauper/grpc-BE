@@ -4,7 +4,7 @@ import type { TaskService } from "../types/task.d.ts";
 const protoPath = new URL("../proto/task.proto", import.meta.url);
 const protoFile = await Deno.readTextFile(protoPath);
 
-const port = +config().GRPC_PORT || 50052;
+const port = +config().GRPC_PORT || 50051;
 
 const client = getClient<TaskService>({
     port: port,

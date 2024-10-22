@@ -1,4 +1,4 @@
-import { config } from "https://deno.land/x/dotenv@v3.2.2/mod.ts";
+import { config } from "../deps.ts";
 
 const env = config();
 
