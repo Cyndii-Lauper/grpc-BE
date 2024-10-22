@@ -1,32 +1,21 @@
 {
-  "name": "auth-service",
+  "name": "@grpc/auth-service",
   "version": "1.0.0",
-  "description": "",
-  "main": "dist/app/server.js",
   "type": "module",
   "scripts": {
-    "start": "node ./dist/app/server.js",
-    "dev": "nodemon --exec node --loader ts-node/esm -r tsconfig-paths/register ./app/server.ts",
-    "build": "tsc --build && tsc-alias",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "bun --watch ./app/index.ts --hot",
+    "dev:server": "deno run --allow-net --allow-env --allow-read --allow-sys --watch ./app/server.ts",
+    "dev:client": "deno run --allow-net --allow-env --allow-read --allow-sys --watch ./app/client.ts",
+    "proto": "deno run --allow-read https://deno.land/x/grpc_basic@0.4.7/gen/dts.ts ./proto/task.proto > ./types/task.d.ts"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
-    "@grpc/grpc-js": "^1.12.2",
-    "dotenv": "^16.4.5",
-    "express": "^4.21.1",
-    "mongoose": "^8.7.1"
+    "mongodb": "^6.9.0",
+    "mongoose": "^8.7.1",
+    "express": "^4.18.3"
   },
-  "devDependencies": {
-    "@types/express": "^5.0.0",
-    "nodemon": "^3.1.7",
-    "ts-node": "^10.9.2",
-    "ts-node-dev": "^2.0.0",
-    "tsc-alias": "^1.8.10",
-    "tsconfig-paths": "^4.2.0",
-    "tsx": "^4.19.1",
-    "typescript": "^5.6.3"
+  "devDependencies": { "@types/express": "^5.0.0", "typescript": "^5.6.3" },
+  "nodeModulesDir": "auto",
+  "compilerOptions": {
+    "lib": ["ES2020", "DOM"]
   }
 }
