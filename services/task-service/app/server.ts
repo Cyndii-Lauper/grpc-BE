@@ -25,7 +25,7 @@ const taskService: TaskService = {
 
 server.addService<TaskService>(protoFile, taskService);
 
-const port = +config().GRPC_PORT || 50052;
+const port = +config().GRPC_PORT || 50051;
 
 await connectDB();
 console.log(`gonna listen on ${port} port`);
